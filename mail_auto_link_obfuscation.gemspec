@@ -18,9 +18,12 @@ Gem::Specification.new do |spec|
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.require_paths = ['lib']
 
+  spec.add_dependency 'railties', '>= 3.0', '< 5.1'
+  spec.add_dependency 'mail', '~> 2.5'
   spec.add_dependency 'nokogiri', '~> 1.6'
 
   spec.add_development_dependency 'bundler', '~> 1.12'
+  spec.add_development_dependency 'rails', '>= 3.0', '< 5.1'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.42'

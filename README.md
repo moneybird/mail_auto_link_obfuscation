@@ -1,8 +1,15 @@
 # MailAutoLinkObfuscation
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/mail_auto_link_obfuscation`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem hooks up your Rails application and prevents email clients from automatically converting link-like text (e.g. `example.com`, `info@example.com`, `ftp://123.234.234.234`) to hyperlinks in your emails.
 
-TODO: Delete this and the text above, and describe your gem
+Automatic links can be an undesired feature, especially when user generated content is part of your emails, e.g. a user's name. If your user is called `your.enemy.com` and you insert his name directly in your mail, you will find that most email clients will make this name clickable. This effect can brake your email layout/design and even worse, it can be considered a security issue.
+
+To prevent email clients from auto-linking any link-like text we have to outsmart their link parsers. Inserting `span` tags in HTML parts and spaces in text parts has shown to work for most email clients. For HTML parts this obfuscation should be invisible. For text parts, it's unfortunately not.
+
+HTML example: `Hello your.enemy.com!` becomes `Hello your<span>.</span>enemy<span>.</span>com`
+Plain text example: `Hello your.enemy.com!` becomes `Hello your .enemy .com`
+
+Note that this module will not touch any explicit links mentioned in anchors in the `href` attribute. Those links are considered desired and trusted. If you provide HTML and text parts with your email (which you should) this gem is also smart enough not to change links in the text part if those have been explicitly hyperlinked in the HTML part.
 
 ## Installation
 
@@ -12,28 +19,32 @@ Add this line to your application's Gemfile:
 gem 'mail_auto_link_obfuscation'
 ```
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install mail_auto_link_obfuscation
-
 ## Usage
+Simply include `MailAutoLinkObfuscation::Automatic` in the mailers where you want obfuscate links.
 
-TODO: Write usage instructions here
+```ruby
+class MyMailer
+  include MailAutoLinkObfuscation::Automatic
+end
+```
+
+## Configuration
+The obfuscation process can be configured at two places:
+
+1. `Rails.application.config.mail_auto_link_obfuscation`
+2. `MyMailer#mail_auto_link_obfuscation_options`
+
+Options are passed as a hash. At this moment you can only add a `style` attribute to the inserted `span` tags using `{ span_style: "font:inherit" }`
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Specs can be run with `rake spec`. Guard is also available.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/moneybird/mail_auto_link_obfuscation. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
 
 ## License
 
