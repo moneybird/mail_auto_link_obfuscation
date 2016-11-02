@@ -137,11 +137,25 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     end
 
     it 'does not change links in html part when used in anchor' do
+      obfuscator.run
       expect(html_part).to include('http://good.org')
     end
 
     it 'does not change links in text part when used in anchor in html part' do
+      obfuscator.run
       expect(text_part).to include('http://good.org')
+    end
+  end
+
+  context 'when mail has escaped html' do
+    let(:mail) do
+      Mail.new.tap { |mail| mail.html_part = "&lt;img src=&quot;google.com&quot;&gt;" }
+    end
+
+    it 'does not unescape' do
+      obfuscator.run
+      expect(html_part).not_to include('<img src')
+      expect(html_part).not_to include('google.com')
     end
   end
 end
