@@ -4,9 +4,9 @@ require 'nokogiri'
 module MailAutoLinkObfuscation
   class AutoLinkObfuscator
     AUTO_LINKED_EMAIL_PATTERN = /\S+@\w+(?:\.\w+)+/
-    AUTO_LINKED_URL_PATTERN = %r{(\w+://\w+(\.\w+)*|\w+(\.\w+)*\.\w{2,})\S*}
+    AUTO_LINKED_URL_PATTERN = %r{((\w+:)?//\w+(\.\w+)*|\w+(\.\w+)*\.\w{2,})\S*}
     AUTO_LINKED_PATTERN = Regexp.new([AUTO_LINKED_EMAIL_PATTERN, AUTO_LINKED_URL_PATTERN].join('|'))
-    KEY_CHARS = /[@.:]/
+    KEY_CHARS = %r{[@.:/]+}
 
     def initialize(mail, options)
       @mail = mail

@@ -14,7 +14,8 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
       'http://localhost',
       'www.a-b.nl',
       'ftp://123.234.123.234',
-      'foo@bar.nl'
+      'foo@bar.nl',
+      '//2130706433/example' # DWORD IP
     ]
   end
 
@@ -74,7 +75,7 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
 
     it 'obfuscates using span tags' do
       obfuscator.run
-      expect(body).to include('https<span>:</span>//hacker<span>.</span>com')
+      expect(body).to include('https<span>://</span>hacker<span>.</span>com')
       expect(body).to include('foo<span>@</span>bar<span>.</span>nl')
     end
 
