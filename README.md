@@ -4,10 +4,9 @@ This gem hooks up your Rails application and prevents email clients from automat
 
 Automatic links can be an undesired feature, especially when user generated content is part of your emails, e.g. a user's name. If your user is called `your.enemy.com` and you insert his name directly in your mail, you will find that most email clients will make this name clickable. This effect can brake your email layout/design and even worse, it can be considered a security issue.
 
-To prevent email clients from auto-linking any link-like text we have to outsmart their link parsers. Inserting `span` tags in HTML parts and spaces in text parts has shown to work for most email clients. For HTML parts this obfuscation should be invisible. For text parts, it's unfortunately not.
+To prevent email clients from auto-linking any link-like text we have to outsmart their link parsers. Wrapping special link characters like `.`, `/` and `@` with invisible/non-printable [zero-width non-joiner](https://en.wikipedia.org/wiki/Zero-width_non-joiner) characters (Unicode U+200C) has shown to work for most email clients.
 
-HTML example: `Hello your.enemy.com!` becomes `Hello your<span>.</span>enemy<span>.</span>com`
-Plain text example: `Hello your.enemy.com!` becomes `Hello your .enemy .com`
+Example: `"Hello your.enemy.com!"` becomes `"Hello your\u200C.\u200Cenemy\u200C.\u200Ccom"`
 
 Note that this module will not touch any explicit links mentioned in anchors in the `href` attribute. Those links are considered desired and trusted. If you provide HTML and text parts with your email (which you should) this gem is also smart enough not to change links in the text part if those have been explicitly hyperlinked in the HTML part.
 
@@ -27,14 +26,6 @@ class MyMailer
   include MailAutoLinkObfuscation::Automatic
 end
 ```
-
-## Configuration
-The obfuscation process can be configured at two places:
-
-1. `Rails.application.config.mail_auto_link_obfuscation`
-2. `MyMailer#mail_auto_link_obfuscation_options`
-
-Options are passed as a hash. At this moment you can only add a `style` attribute to the inserted `span` tags using `{ span_style: "font:inherit" }`
 
 ## Development
 

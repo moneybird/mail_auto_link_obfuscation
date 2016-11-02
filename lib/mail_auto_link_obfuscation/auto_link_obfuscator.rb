@@ -53,19 +53,11 @@ module MailAutoLinkObfuscation
 
     def transform_html(doc)
       doc.xpath('//body/descendant::text()').each do |node|
-        content = CGI.escapeHTML(node.content)
-        content = transform_auto_linked_pattern(content) do |match|
-          match.gsub(KEY_CHARS, span_template)
-        end
-
-        node.replace(content)
+        text = CGI.escapeHTML(node.content)
+        node.replace(transform_text(text))
       end
 
       doc.to_s
-    end
-
-    def span_template
-      @span_template ||= '<span' + (@options[:span_style] ? " style=#{@options[:span_style]}" : '') + '>\0</span>'
     end
 
     def transform_text_body
@@ -78,7 +70,7 @@ module MailAutoLinkObfuscation
 
     def transform_text(text)
       transform_auto_linked_pattern(text) do |match|
-        match.gsub(KEY_CHARS, ' \0')
+        match.gsub(KEY_CHARS, "\u200C\\0\u200C")
       end
     end
 

@@ -30,14 +30,13 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
   let(:content) { (linkables + unlinkables).join(' ') }
 
   let(:body) { mail.body.decoded }
-  let(:body_without_space) { body.gsub(/\s*/, '') }
-  let(:body_without_tags) { body.gsub(/<[^>]*>/, '') }
+  let(:body_printable) { body.delete("\u200C") }
 
   let(:text_part) { mail.text_part.body.decoded }
-  let(:text_part_without_space) { text_part.gsub(/\s*/, '') }
+  let(:text_part_printable) { text_part.delete("\u200C") }
 
   let(:html_part) { mail.html_part.body.decoded }
-  let(:html_part_without_tags) { html_part.gsub(/<[^>]*>/, '') }
+  let(:html_part_printable) { html_part.delete("\u200C") }
 
   context 'when mail has text body' do
     let(:mail) do
@@ -47,13 +46,13 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     it 'obfuscates linkables' do
       obfuscator.run
       expect(body).not_to include(*linkables)
-      expect(body_without_space).to include(*linkables)
+      expect(body_printable).to include(*linkables)
     end
 
-    it 'obfuscates using spaces around key chars' do
+    it 'obfuscates using zero-width non-joiner chars around key chars' do
       obfuscator.run
-      expect(body).to include('https ://hacker .com')
-      expect(body).to include('foo @bar .nl')
+      expect(body).to include("https\u200C://\u200Chacker\u200C.\u200Ccom")
+      expect(body).to include("foo\u200C@\u200Cbar\u200C.\u200Cnl")
     end
 
     it 'does not change unlinkables' do
@@ -70,22 +69,14 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     it 'obfuscates linkables' do
       obfuscator.run
       expect(body).not_to include(*linkables)
-      expect(body_without_tags).to include(*linkables)
+      expect(body_printable).to include(*linkables)
     end
 
-    it 'obfuscates using span tags' do
+    it 'obfuscates using zero-width non-joiner chars' do
       obfuscator.run
-      expect(body).to include('https<span>://</span>hacker<span>.</span>com')
-      expect(body).to include('foo<span>@</span>bar<span>.</span>nl')
-    end
-
-    context 'when span_style option is set' do
-      let(:options) { { span_style: 'font:inherit' } }
-
-      it 'applies style to span tags' do
-        obfuscator.run
-        expect(body).to include('foo<span style="font:inherit">@</span>bar<span style="font:inherit">.</span>nl')
-      end
+      p body.chars
+      expect(body).to include("https\u200C://\u200Chacker\u200C.\u200Ccom")
+      expect(body).to include("foo\u200C@\u200Cbar\u200C.\u200Cnl")
     end
 
     it 'does not change unlinkables' do
@@ -102,7 +93,7 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     it 'obfuscates linkables' do
       obfuscator.run
       expect(text_part).not_to include(*linkables)
-      expect(text_part_without_space).to include(*linkables)
+      expect(text_part_printable).to include(*linkables)
     end
 
     it 'does not change unlinkables' do
@@ -119,7 +110,7 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     it 'obfuscates linkables' do
       obfuscator.run
       expect(html_part).not_to include(*linkables)
-      expect(html_part_without_tags).to include(*linkables)
+      expect(html_part_printable).to include(*linkables)
     end
 
     it 'does not change unlinkables' do
@@ -149,7 +140,7 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
 
   context 'when mail has escaped html' do
     let(:mail) do
-      Mail.new.tap { |mail| mail.html_part = "&lt;img src=&quot;google.com&quot;&gt;" }
+      Mail.new.tap { |mail| mail.html_part = '&lt;img src=&quot;google.com&quot;&gt;' }
     end
 
     it 'does not unescape' do
