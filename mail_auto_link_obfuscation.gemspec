@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Obfuscate link-like mail content on delivery to prevent auto hyperlinks in modern email clients.'
   spec.description   = 'Obfuscate link-like mail content on delivery to prevent auto hyperlinks in modern email clients.'
-  spec.homepage      = ''
+  spec.homepage      = 'https://github.com/moneybird/mail_auto_link_obfuscation'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
