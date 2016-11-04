@@ -74,7 +74,6 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
 
     it 'obfuscates using zero-width non-joiner chars' do
       obfuscator.run
-      p body.chars
       expect(body).to include("https\u200C://\u200Chacker\u200C.\u200Ccom")
       expect(body).to include("foo\u200C@\u200Cbar\u200C.\u200Cnl")
     end
