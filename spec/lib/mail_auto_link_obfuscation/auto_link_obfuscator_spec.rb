@@ -40,7 +40,7 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
 
   context 'when mail has text body' do
     let(:mail) do
-      Mail.new(body: content, content_type: 'text/plain')
+      Mail.new(body: content, content_type: 'text/plain; charset=UTF-8')
     end
 
     it 'obfuscates linkables' do
@@ -63,7 +63,7 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
 
   context 'when mail has html body' do
     let(:mail) do
-      Mail.new(body: content, content_type: 'text/html')
+      Mail.new(body: content, content_type: 'text/html; charset=UTF-8')
     end
 
     it 'obfuscates linkables' do

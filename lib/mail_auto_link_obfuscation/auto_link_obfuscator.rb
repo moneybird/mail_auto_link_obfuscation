@@ -15,8 +15,8 @@ module MailAutoLinkObfuscation
 
     def run
       extract_link_whitelist_from_html
-      transform_html_body if @mail.content_type == 'text/html'
-      transform_text_body if @mail.content_type == 'text/plain'
+      transform_html_body if @mail.content_type.include? 'text/html'
+      transform_text_body if @mail.content_type.include? 'text/plain'
       transform_html_part if @mail.html_part
       transform_text_part if @mail.text_part
       @mail
@@ -34,7 +34,7 @@ module MailAutoLinkObfuscation
     end
 
     def html_body_doc
-      return unless @mail.content_type == 'text/html'
+      return unless @mail.content_type.include? 'text/html'
       @html_body_doc ||= Nokogiri::HTML(@mail.body.decoded)
     end
 
