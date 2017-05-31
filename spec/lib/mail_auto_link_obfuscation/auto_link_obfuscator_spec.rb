@@ -156,6 +156,17 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     end
   end
 
+  context 'when mail has script tags in html' do
+    let(:mail) do
+      Mail.new.tap { |mail| mail.html_part = '<script>var a = "foobar.com"</script>' }
+    end
+
+    it 'does not replace links' do
+      obfuscator.run
+      expect(html_part).to include('foobar.com')
+    end
+  end
+
   context 'when mail has escaped html' do
     let(:mail) do
       Mail.new.tap { |mail| mail.html_part = '&lt;img src=&quot;google.com&quot;&gt;' }
