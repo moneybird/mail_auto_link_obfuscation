@@ -118,7 +118,7 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     end
   end
 
-  context 'when mail has html and text part' do
+  context 'when mail has html and text part and url' do
     let(:mail) do
       Mail.new.tap do |mail|
         mail.text_part = 'http://good.org'
@@ -134,6 +134,25 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     it 'does not change links in text part when used in anchor in html part' do
       obfuscator.run
       expect(text_part).to include('http://good.org')
+    end
+  end
+
+  context 'when mail has html and text part and email' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = 'mail: (info@moneybird.com)'
+        mail.html_part = '<a href="mailto:info@moneybird.com">email</a>'
+      end
+    end
+
+    it 'does not change links in html part when used in anchor' do
+      obfuscator.run
+      expect(html_part).to include('info@moneybird.com')
+    end
+
+    it 'does not change links in text part when used in anchor in html part' do
+      obfuscator.run
+      expect(text_part).to include('info@moneybird.com')
     end
   end
 
