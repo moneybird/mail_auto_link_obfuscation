@@ -178,4 +178,19 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
       expect(html_part).not_to include('google.com')
     end
   end
+
+  context 'when mail contains unicode chars and transferred in quoted printable encoding' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = '€ hacker.com'
+        mail.text_part.content_type = 'text/plain; charset=UTF-8'
+        mail.text_part.content_transfer_encoding = 'quoted-printable'
+      end
+    end
+
+    it 'obfuscates linkables' do
+      obfuscator.run
+      expect(text_part).not_to include('hacker.com')
+    end
+  end
 end

@@ -35,12 +35,12 @@ module MailAutoLinkObfuscation
 
     def html_body_doc
       return unless @mail.content_type.include? 'text/html'
-      @html_body_doc ||= Nokogiri::HTML(@mail.body.decoded)
+      @html_body_doc ||= Nokogiri::HTML(@mail.decoded)
     end
 
     def html_part_doc
       return unless @mail.html_part
-      @html_part_doc ||= Nokogiri::HTML(@mail.html_part.body.decoded)
+      @html_part_doc ||= Nokogiri::HTML(@mail.html_part.decoded)
     end
 
     def transform_html_body
@@ -61,11 +61,11 @@ module MailAutoLinkObfuscation
     end
 
     def transform_text_body
-      @mail.body = transform_text(@mail.body.decoded)
+      @mail.body = transform_text(@mail.decoded)
     end
 
     def transform_text_part
-      @mail.text_part.body = transform_text(@mail.text_part.body.decoded)
+      @mail.text_part.body = transform_text(@mail.text_part.decoded)
     end
 
     def transform_text(text)
