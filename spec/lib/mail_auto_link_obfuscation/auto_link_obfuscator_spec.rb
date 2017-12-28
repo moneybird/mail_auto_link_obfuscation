@@ -10,6 +10,7 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
   let(:linkables) do
     [
       'https://hacker.com',
+      'https://hacker.com/with/path/',
       'example.com',
       'a.b.c.domain.com',
       'http://localhost',
@@ -136,6 +137,44 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     it 'does not change links in text part when used in anchor in html part' do
       obfuscator.run
       expect(text_part).to include('http://good.org')
+    end
+  end
+
+  context 'when mail has html and text part and url with scheme and path' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = 'http://good.org/foo/bar/'
+        mail.html_part = '<a href="http://good.org/foo/bar/">good.org</a>'
+      end
+    end
+
+    it 'does not change links in html part when used in anchor' do
+      obfuscator.run
+      expect(html_part).to include('http://good.org/foo/bar/')
+    end
+
+    it 'does not change links in text part when used in anchor in html part' do
+      obfuscator.run
+      expect(text_part).to include('http://good.org/foo/bar/')
+    end
+  end
+
+  context 'when mail has html and text part and url with path and without scheme' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = 'good.org/foo/bar/'
+        mail.html_part = '<a href="good.org/foo/bar/">good.org</a>'
+      end
+    end
+
+    it 'does not change links in html part when used in anchor' do
+      obfuscator.run
+      expect(html_part).to include('good.org/foo/bar/')
+    end
+
+    it 'does not change links in text part when used in anchor in html part' do
+      obfuscator.run
+      expect(text_part).to include('good.org/foo/bar/')
     end
   end
 
