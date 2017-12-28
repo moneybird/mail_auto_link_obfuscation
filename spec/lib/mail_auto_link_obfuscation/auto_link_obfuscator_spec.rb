@@ -24,7 +24,8 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     [
       'foobar',
       'foo. bar',
-      'a.b.c. solutions b.v.'
+      'a.b.c. solutions b.v.',
+      'a.th.b foobar'
     ]
   end
 
