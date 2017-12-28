@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 require 'mail'
 
@@ -15,15 +16,17 @@ RSpec.describe MailAutoLinkObfuscation::ObfuscateAutoLinksOnDelivery do
 
   describe '#deliver' do
     it 'obfuscates auto links using options' do
-      expect(email.delivery_method).to receive(:deliver!)
+      allow(email.delivery_method).to receive(:deliver!)
       email.deliver
+      expect(email.delivery_method).to have_received(:deliver!)
     end
   end
 
   describe '#deliver!' do
     it 'obfuscates auto links using options' do
-      expect(email.delivery_method).to receive(:deliver!)
+      allow(email.delivery_method).to receive(:deliver!)
       email.deliver!
+      expect(email.delivery_method).to have_received(:deliver!)
     end
   end
 end

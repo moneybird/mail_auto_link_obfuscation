@@ -6,3 +6,13 @@ AllCops:
 
 Metrics/LineLength:
   Max: 125
+
+Style/Documentation:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Max: 2
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
