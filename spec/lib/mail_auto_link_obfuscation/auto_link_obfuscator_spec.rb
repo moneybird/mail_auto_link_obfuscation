@@ -122,6 +122,25 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     end
   end
 
+  context 'when mail has html and text part and email address' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = 'info@foobar.com'
+        mail.html_part = '<a href="mailto:info@foobar.com">info@foobar.com</a>'
+      end
+    end
+
+    it 'does not change email address in html part when used in mailto anchor' do
+      obfuscator.run
+      expect(html_part).to include('info@foobar.com')
+    end
+
+    it 'does not change email address in text part when used in mailto anchor in html part' do
+      obfuscator.run
+      expect(text_part).to include('info@foobar.com')
+    end
+  end
+
   context 'when mail has html and text part and url' do
     let(:mail) do
       Mail.new.tap do |mail|
