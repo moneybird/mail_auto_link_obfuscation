@@ -56,6 +56,7 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
       obfuscator.run
       expect(body).to include("https\u200C://\u200Chacker\u200C.\u200Ccom")
       expect(body).to include("foo\u200C@\u200Cbar\u200C.\u200Cnl")
+      expect(body).to include("https\u200C://\u200Chacker\u200C.\u200Ccom/with/path/")
     end
 
     it 'does not change unlinkables' do
