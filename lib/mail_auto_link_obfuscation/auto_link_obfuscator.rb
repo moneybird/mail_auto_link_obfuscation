@@ -55,6 +55,7 @@ module MailAutoLinkObfuscation
 
     def transform_html(doc)
       doc.xpath('//body/descendant::text()').each do |node|
+        next if node.parent&.name == 'script'
         text = CGI.escapeHTML(node.content)
         node.replace(transform_text(text))
       end

@@ -239,7 +239,22 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
 
   context 'when mail has script tags in html' do
     let(:mail) do
-      Mail.new.tap { |mail| mail.html_part = '<script type="application/ld+json">var a = "foobar.com"</script>' }
+      Mail.new.tap do |mail|
+        mail.html_part = '<script type="application/ld+json">var a = "foobar.com"</script>'
+      end
+    end
+
+    it 'does not replace links' do
+      obfuscator.run
+      expect(html_part).to include('foobar.com')
+    end
+  end
+
+  context 'when mail has script tags in body' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.html_part = '<body><script type="application/ld+json">var a = "foobar.com"</script></body>'
+      end
     end
 
     it 'does not replace links' do
