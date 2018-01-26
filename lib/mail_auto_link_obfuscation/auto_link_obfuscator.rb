@@ -4,8 +4,8 @@ require 'nokogiri'
 
 module MailAutoLinkObfuscation
   class AutoLinkObfuscator
-    AUTO_LINKED_EMAIL_PATTERN = /[\w\.%+-]+@\w+(?:\.\w+)+/
-    AUTO_LINKED_URL_PATTERN = %r{(?:(?:\w+:)?//\w+(?:\.\w+)*|\w+(?:\.\w+)*\.\w{2,}(?!\.\w+))\S*}
+    AUTO_LINKED_EMAIL_PATTERN = /[\w\.%+-]+@[\w-]+(?:\.[\w-]+)+/
+    AUTO_LINKED_URL_PATTERN = %r{(?:(?:\w+:)?//[\w-]+(?:\.[\w-]+)*|[\w-]+(?:\.[\w-]+)*\.\w{2,}(?!\.\w))\S*}
     AUTO_LINKED_PATTERN = Regexp.new([AUTO_LINKED_EMAIL_PATTERN, AUTO_LINKED_URL_PATTERN].join('|'))
     KEY_CHARS = %r{[@.]+|:*//+}
 

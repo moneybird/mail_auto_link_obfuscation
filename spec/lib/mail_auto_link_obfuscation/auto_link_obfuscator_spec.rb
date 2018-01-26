@@ -11,6 +11,8 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     [
       'https://hacker.com',
       'https://hacker.com/with/path/',
+      'https://bad-hacker.com',
+      'https://bad-hacker.com/with-path',
       'example.com',
       'a.b.c.domain.com',
       'http://localhost',
@@ -132,12 +134,31 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
 
     it 'does not change email address in html part when used in mailto anchor' do
       obfuscator.run
-      expect(html_part).to include('info@foobar.com')
+      expect(html_part).to include('mailto:info@foobar.com', '>info@foobar.com<')
     end
 
     it 'does not change email address in text part when used in mailto anchor in html part' do
       obfuscator.run
       expect(text_part).to include('info@foobar.com')
+    end
+  end
+
+  context 'when mail contains dash' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = 'info@foo-bar.com'
+        mail.html_part = '<a href="mailto:info@foo-bar.com">info@foo-bar.com</a>'
+      end
+    end
+
+    it 'does not change email address in html part when used in mailto anchor' do
+      obfuscator.run
+      expect(html_part).to include('mailto:info@foo-bar.com', '>info@foo-bar.com<')
+    end
+
+    it 'does not change email address in text part when used in mailto anchor in html part' do
+      obfuscator.run
+      expect(text_part).to include('info@foo-bar.com')
     end
   end
 
@@ -177,6 +198,26 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     it 'does not change links in text part when used in anchor in html part' do
       obfuscator.run
       expect(text_part).to include('www.good.org')
+    end
+  end
+
+  context 'when mail has html and text part and url with dash' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = 'http://www.very-good.org/more-stuff'
+        mail.html_part = '<a href="http://www.very-good.org/more-stuff">www.very-good.org/more-stuff</a>'
+      end
+    end
+
+    it 'does not change links in html part when used in anchor' do
+      obfuscator.run
+      expect(html_part).to include('http://www.very-good.org/more-stuff')
+      expect(html_part).to include('>www.very-good.org/more-stuff<')
+    end
+
+    it 'does not change links in text part when used in anchor in html part' do
+      obfuscator.run
+      expect(text_part).to include('www.very-good.org/more-stuff')
     end
   end
 
