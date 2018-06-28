@@ -331,7 +331,7 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     end
   end
 
-  context 'matches URLs when the URL is followed by a dot' do
+  context 'when the URL is followed by a dot' do
     let(:mail) do
       Mail.new.tap do |mail|
         mail.text_part = 'See link: https://moneybird.com/user/edit.'
@@ -342,6 +342,63 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
     it 'does not change links in html part when used in anchor' do
       obfuscator.run
       expect(html_part).to include('https://moneybird.com/user/edit')
+    end
+
+    it 'does not change links in text part when used in anchor in html part' do
+      obfuscator.run
+      expect(text_part).to include('https://moneybird.com/user/edit')
+    end
+  end
+
+  context 'when the URL contains query part in text part' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = 'See link: https://moneybird.com/user/edit?q=foobar'
+        mail.html_part = '<p>See <a href="https://moneybird.com/user/edit">link</a>.</p>'
+      end
+    end
+
+    it 'does not change links in html part when used in anchor' do
+      obfuscator.run
+      expect(html_part).to include('https://moneybird.com/user')
+    end
+
+    it 'does not change links in text part when used in anchor in html part' do
+      obfuscator.run
+      expect(text_part).to include('https://moneybird.com/user/edit?q=foobar')
+    end
+  end
+
+  context 'when the URL contains query part in html part' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = 'See link: https://moneybird.com/user/edit'
+        mail.html_part = '<p>See <a href="https://moneybird.com/user/edit?q=foobar">link</a>.</p>'
+      end
+    end
+
+    it 'does not change links in html part when used in anchor' do
+      obfuscator.run
+      expect(html_part).to include('https://moneybird.com/user/edit?q=foobar')
+    end
+
+    it 'does not change links in text part when used in anchor in html part' do
+      obfuscator.run
+      expect(text_part).to include('https://moneybird.com/user/edit')
+    end
+  end
+
+  context 'when the URL contains fragment and query part in html part' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = 'See link: https://moneybird.com/user/edit'
+        mail.html_part = '<p>See <a href="https://moneybird.com/user/edit?q=foobar#header">link</a>.</p>'
+      end
+    end
+
+    it 'does not change links in html part when used in anchor' do
+      obfuscator.run
+      expect(html_part).to include('https://moneybird.com/user/edit?q=foobar#header')
     end
 
     it 'does not change links in text part when used in anchor in html part' do

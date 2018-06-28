@@ -31,8 +31,8 @@ module MailAutoLinkObfuscation
 
     def extract_link_whitelist_from(doc)
       return Set.new unless doc
-      whitelist = doc.xpath('//@href').map { |href| href.content.sub(/\Amailto:/, '') }.to_set
-      whitelist.merge(whitelist.map { |href| href.sub(%r{\A[a-z]+://}, '') })
+      whitelist = doc.xpath('//@href').map { |href| href.content.sub(/\Amailto:|[?#].*\z/, '') }.to_set
+      whitelist.merge(whitelist.map { |href| href.sub(%r{\A\w+://}, '') })
     end
 
     def html_body_doc
