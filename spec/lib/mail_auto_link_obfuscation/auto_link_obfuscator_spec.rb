@@ -334,8 +334,8 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
   context 'matches URLs when the URL is followed by a dot' do
     let(:mail) do
       Mail.new.tap do |mail|
-        mail.text_part = 'Natuurlijk vinden we het ook prima als je deze e-mails niet wil ontvangen. Afmelden kan via https://moneybird.com/user/edit.'
-        mail.html_part = '<p>Natuurlijk vinden we het ook prima als je deze e-mails <a href="https://moneybird.com/user/edit">niet wil ontvangen</a>.</p>'
+        mail.text_part = 'See link: https://moneybird.com/user/edit.'
+        mail.html_part = '<p>See <a href="https://moneybird.com/user/edit">link</a>.</p>'
       end
     end
 
