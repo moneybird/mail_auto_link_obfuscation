@@ -79,7 +79,7 @@ module MailAutoLinkObfuscation
 
     def transform_auto_linked_pattern(text)
       text.gsub(AUTO_LINKED_PATTERN) do |match|
-        @link_whitelist.include?(match) ? match : yield(match)
+        @link_whitelist.any? { |whitelisted_link| match.start_with?(whitelisted_link) } ? match : yield(match)
       end
     end
   end
