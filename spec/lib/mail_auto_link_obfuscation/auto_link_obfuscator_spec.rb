@@ -330,4 +330,23 @@ RSpec.describe MailAutoLinkObfuscation::AutoLinkObfuscator do
       expect(text_part).not_to include('hacker.com')
     end
   end
+
+  context 'matches URLs when the URL is followed by a dot' do
+    let(:mail) do
+      Mail.new.tap do |mail|
+        mail.text_part = 'Natuurlijk vinden we het ook prima als je deze e-mails niet wil ontvangen. Afmelden kan via https://moneybird.com/user/edit.'
+        mail.html_part = '<p>Natuurlijk vinden we het ook prima als je deze e-mails <a href="https://moneybird.com/user/edit">niet wil ontvangen</a>.</p>'
+      end
+    end
+
+    it 'does not change links in html part when used in anchor' do
+      obfuscator.run
+      expect(html_part).to include('https://moneybird.com/user/edit')
+    end
+
+    it 'does not change links in text part when used in anchor in html part' do
+      obfuscator.run
+      expect(text_part).to include('https://moneybird.com/user/edit')
+    end
+  end
 end
