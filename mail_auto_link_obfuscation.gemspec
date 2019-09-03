@@ -20,12 +20,12 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'mail', '~> 2.5'
   spec.add_dependency 'nokogiri', '~> 1.6'
-  spec.add_dependency 'railties', '>= 3.0', '~> 5.0'
+  spec.add_dependency 'railties', '>= 3.0', '~> 6.0'
 
   spec.add_development_dependency 'bundler', '~> 1.12'
   spec.add_development_dependency 'guard', '~> 2.14'
   spec.add_development_dependency 'guard-rspec', '~> 4.7'
-  spec.add_development_dependency 'rails', '>= 3.0', '~> 5.0'
+  spec.add_development_dependency 'rails', '>= 3.0', '~> 6.0'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.49'
