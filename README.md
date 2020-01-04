@@ -2,7 +2,7 @@
 
 This gem hooks up your Rails application and prevents email clients from automatically converting link-like text (e.g. `example.com`, `info@example.com`, `ftp://123.234.234.234`) to hyperlinks in your emails.
 
-Automatic links can be an undesired feature, especially when user generated content is part of your emails, e.g. a user's name. If your user is called `your.enemy.com` and you insert his name directly in your mail, you will find that most email clients will make this name clickable. This effect can brake your email layout/design and even worse, it can be considered a security issue.
+Automatic links can be an undesired feature, especially when user generated content is part of your emails, e.g. a user's name. If your user is called `your.enemy.com` and you insert the name directly in your mail, you will find that most email clients will make this name clickable. This effect can brake your email layout/design and even worse, it can be considered a security issue.
 
 To prevent email clients from auto-linking any link-like text we have to outsmart their link parsers. Wrapping special link characters like `.`, `/` and `@` with invisible/non-printable [zero-width non-joiner](https://en.wikipedia.org/wiki/Zero-width_non-joiner) characters (Unicode U+200C) has shown to work for most email clients.
 
